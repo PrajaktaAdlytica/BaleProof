@@ -1,0 +1,13 @@
+# BaleProof: static Vite build on Hostinger PHP/HTML hosting.
+DirectoryIndex index.html
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Serve real assets and directories normally.
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  # Missing asset/API requests must not receive HTML.
+  RewriteRule ^(?:assets|images|brand|api)(?:/|$) - [L]
+  # React Router routes, including direct links and page refreshes.
+  RewriteRule ^ index.html [L]
+</IfModule>
