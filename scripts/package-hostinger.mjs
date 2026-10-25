@@ -1,0 +1,10 @@
+import {existsSync,mkdirSync,rmSync} from 'node:fs';
+import {resolve} from 'node:path';
+import {execFileSync} from 'node:child_process';
+const source=resolve('dist/client');
+for(const name of ['index.html','.htaccess'])if(!existsSync(resolve(source,name)))throw new Error(`Missing ${name}; run npm run build first.`);
+mkdirSync('artifacts',{recursive:true});
+const archive=resolve('artifacts/BaleProof-Hostinger.zip');
+rmSync(archive,{force:true});
+execFileSync('zip',['-q','-r',archive,'.'],{cwd:source,stdio:'inherit'});
+console.log(`Hostinger upload archive: ${archive}`);

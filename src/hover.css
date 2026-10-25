@@ -1,0 +1,475 @@
+/* BaleProof interaction language: paper shutters, evidence tabs and waypoints.
+   Only decorative layers move. The element's clickable box stays fixed. */
+.site-shell {
+  --hover-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --hover-time: 460ms;
+}
+.site-shell :where(a, button, summary) {
+  --engaged: 0;
+}
+.site-shell :where(a, button, summary):focus-visible {
+  --engaged: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .site-shell :where(a, button, summary):hover:not(:disabled) {
+    --engaged: 1;
+  }
+}
+
+/* Opposed shutters on primary CTAs; folding paper on outlined CTAs. */
+.button:not(.text-button) {
+  isolation: isolate;
+  overflow: hidden;
+  --shutter: var(--ink);
+  transition:
+    border-color 250ms,
+    box-shadow 250ms;
+}
+.button:not(.text-button)::before,
+.button:not(.text-button)::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  width: 51%;
+  background: var(--shutter);
+  transform: scaleX(var(--engaged));
+  transition: transform var(--hover-time) var(--hover-ease);
+}
+.button:not(.text-button)::before {
+  left: 0;
+  transform-origin: left center;
+}
+.button:not(.text-button)::after {
+  right: 0;
+  transform-origin: right center;
+  transition-delay: 35ms;
+}
+.button:not(.secondary):not(.text-button):is(:hover, :focus-visible) {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.button.secondary {
+  --shutter: var(--tint);
+  perspective: 500px;
+}
+.button.secondary::before,
+.button.secondary::after {
+  transform: rotateX(calc((1 - var(--engaged)) * 90deg));
+  transform-origin: center bottom;
+}
+.button.secondary::after {
+  transform-origin: center top;
+}
+.button.secondary:is(:hover, :focus-visible) {
+  background: transparent;
+  border-color: var(--ink);
+}
+.evidence-copy .button.secondary {
+  --shutter: #ffffff20;
+}
+.evidence-copy .button.secondary:is(:hover, :focus-visible) {
+  background: transparent;
+  border-color: #fffefa;
+}
+.button > .button-arrow {
+  display: inline-block;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  overflow: hidden;
+  position: relative;
+  border: 0;
+  padding: 0;
+}
+.button > .button-arrow > svg {
+  position: absolute;
+  inset: 0;
+  transition:
+    transform var(--hover-time) var(--hover-ease),
+    opacity 250ms;
+  transform: translate(
+    calc(var(--engaged) * 130%),
+    calc(var(--engaged) * -130%)
+  );
+  opacity: calc(1 - var(--engaged));
+}
+.button > .button-arrow > svg + svg {
+  transform: translate(
+    calc((var(--engaged) - 1) * 130%),
+    calc((1 - var(--engaged)) * 130%)
+  );
+  opacity: var(--engaged);
+}
+.button:disabled {
+  --engaged: 0 !important;
+  box-shadow: none;
+}
+.button:disabled:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.button.secondary:disabled:hover {
+  background: transparent;
+  border-color: var(--line);
+}
+
+/* Underline sweeps retain a visible baseline for text links. */
+.inline-link,
+.text-button > span:not(.button-arrow),
+.sign-link,
+.breadcrumb a,
+.footer-bottom a,
+.reading-section a:not(.button),
+.source-links a {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: calc(var(--engaged) * 100%) 1px;
+  transition:
+    background-size var(--hover-time) var(--hover-ease),
+    color 250ms;
+}
+.inline-link svg,
+.footer-cta svg,
+.scroll-cue svg {
+  transition: transform var(--hover-time) var(--hover-ease);
+  transform: translateX(calc(var(--engaged) * 6px));
+}
+.inline-link:hover svg {
+  transform: translateX(calc(var(--engaged) * 6px));
+}
+.desktop-nav > a::after,
+.desktop-nav > button::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 7px;
+  height: 2px;
+  width: 100%;
+  background: var(--accent);
+  transform: scaleX(var(--engaged));
+  transform-origin: left;
+  transition: transform var(--hover-time) var(--hover-ease);
+}
+.desktop-nav > button > svg {
+  transition: transform 350ms var(--hover-ease);
+}
+.desktop-nav > button[aria-expanded="true"] > svg {
+  transform: rotateX(180deg);
+}
+
+/* Footer links use a quiet direction marker and an illuminated rule. */
+.footer-top > div > a:not(.logo) {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  padding-right: 20px;
+  text-decoration: none;
+  transition: color 250ms;
+}
+.footer-top > div > a:not(.logo)::before {
+  content: "";
+  position: absolute;
+  inset: auto 20px -4px 0;
+  height: 1px;
+  background: #dfc29c;
+  transform: scaleX(var(--engaged));
+  transform-origin: left;
+  transition: transform var(--hover-time) var(--hover-ease);
+}
+.footer-top > div > a:not(.logo):not(.footer-cta)::after {
+  content: "↗" / "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  color: #dfc29c;
+  opacity: var(--engaged);
+  transform: translate(
+    calc((1 - var(--engaged)) * -6px),
+    calc((1 - var(--engaged)) * 5px)
+  );
+  transition:
+    opacity 250ms,
+    transform var(--hover-time) var(--hover-ease);
+}
+.site-footer :is(a, button):focus-visible {
+  outline-color: #dfc29c;
+}
+.footer-top > div > a:hover {
+  text-decoration: none;
+}
+.logo img {
+  transition: transform 500ms var(--hover-ease);
+  transform: perspective(200px) rotateY(calc(var(--engaged) * -16deg));
+}
+.logo span {
+  transition: color 250ms;
+}
+
+/* Card artwork reveals a corner marker, while the original image stays legible. */
+.product-panel-art,
+.resource-card > div {
+  position: relative;
+  isolation: isolate;
+}
+.product-panel-art::after,
+.resource-card > div::after {
+  content: "↗" / "";
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fffefa;
+  font:
+    21px "Manrope Variable",
+    sans-serif;
+  opacity: var(--engaged);
+  transform: translateY(calc((1 - var(--engaged)) * 12px))
+    rotate(calc((1 - var(--engaged)) * -45deg));
+  transition:
+    opacity 300ms,
+    transform 550ms var(--hover-ease);
+  pointer-events: none;
+  z-index: 2;
+}
+.product-panel .product-image,
+.resource-card img {
+  transition: transform 650ms var(--hover-ease);
+  transform: scale(calc(1 + var(--engaged) * 0.045));
+}
+.product-panel:hover .product-image,
+.resource-card:hover img {
+  transform: scale(calc(1 + var(--engaged) * 0.045));
+}
+.product-panel h3,
+.resource-card h2,
+.roles-grid h3 {
+  transition: color 250ms;
+}
+.packet-image-link:hover {
+  transform: none;
+}
+.packet-image-link img {
+  transition: scale 650ms var(--hover-ease);
+  scale: calc(1 + var(--engaged) * 0.025);
+}
+.packet-hover {
+  transition:
+    opacity 250ms,
+    translate var(--hover-time) var(--hover-ease);
+  translate: 0 calc((1 - var(--engaged)) * 10px);
+}
+.packet-image-link:focus-visible .packet-hover {
+  opacity: 1;
+}
+
+/* Rows gain a paper wash; no padding changes or layout movement. */
+.price-table > a {
+  position: relative;
+  isolation: isolate;
+  transition: background 250ms;
+}
+.price-table > a::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #fffefa;
+  transform: scaleX(var(--engaged));
+  transform-origin: left;
+  transition: transform 550ms var(--hover-ease);
+}
+.price-table > a:hover {
+  padding-left: 6px;
+  padding-right: 6px;
+  background: transparent;
+}
+.price-table > a > svg {
+  transition: rotate 400ms var(--hover-ease);
+  rotate: calc(var(--engaged) * -45deg);
+}
+.icon-button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.icon-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  border-radius: 50%;
+  z-index: -1;
+  transform: scale(var(--engaged));
+  transform-origin: bottom left;
+  transition: transform 400ms var(--hover-ease);
+}
+.icon-button > svg {
+  transition: rotate 400ms var(--hover-ease);
+  rotate: calc(var(--engaged) * -12deg);
+}
+.icon-button:focus-visible {
+  color: white;
+}
+.faq-item summary {
+  transition:
+    color 250ms,
+    background 250ms;
+}
+.faq-item summary svg {
+  transition: rotate 400ms var(--hover-ease);
+  rotate: calc(var(--engaged) * 90deg);
+}
+.coverage-controls button,
+.case-tabs button,
+.queue-counts button,
+.product-jumps button,
+.motion-control,
+.review-panel .reject-button,
+.demo-bar > button,
+.queue-table tbody tr,
+.mega-products > a,
+.teaser-queue a,
+.demo-nav a,
+.mobile-menu > a:not(.button) {
+  transition:
+    background-color 250ms,
+    color 250ms,
+    box-shadow 250ms;
+}
+:is(.coverage-controls, .case-tabs, .queue-counts) button:focus-visible {
+  box-shadow: inset 0 -2px var(--accent);
+}
+input:not([type="checkbox"]),
+textarea,
+select {
+  transition:
+    border-color 250ms,
+    box-shadow 250ms;
+}
+:is(input, textarea, select):focus-visible {
+  box-shadow: 0 0 0 4px #94452d12;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .desktop-nav > a:hover,
+  .desktop-nav > button:hover,
+  .sign-link:hover,
+  .breadcrumb a:hover,
+  .reading-section a:not(.button):hover,
+  .source-links a:hover,
+  .product-panel > a:hover h3,
+  .resource-card:hover h2,
+  .roles-grid > a:hover h3 {
+    color: var(--accent);
+  }
+  .footer-top > div > a:hover,
+  .footer-bottom :is(a, button):hover {
+    color: #dfc29c;
+  }
+  .mega-products > a:hover,
+  .teaser-queue a:hover,
+  .demo-nav a:hover,
+  .mobile-menu > a:not(.button):hover {
+    background-color: var(--tint);
+  }
+  :is(.coverage-controls, .case-tabs, .queue-counts, .product-jumps)
+    button:not(.active):hover {
+    background-color: var(--tint);
+    box-shadow: inset 0 -2px var(--accent);
+  }
+  .queue-table tbody tr:hover {
+    background: #eee4d8;
+  }
+  .faq-item summary:hover {
+    color: var(--accent);
+    background: #d8c8b512;
+  }
+  .review-panel .reject-button:hover,
+  .demo-bar > button:hover {
+    background: var(--tint);
+  }
+  :is(input, textarea, select):not(:disabled):hover {
+    border-color: var(--accent);
+  }
+}
+:is(.desktop-nav a, .sign-link, .breadcrumb a, .inline-link):focus-visible {
+  color: var(--accent);
+}
+:is(.product-panel > a, .resource-card, .roles-grid > a):focus-visible
+  :is(h2, h3) {
+  color: var(--accent);
+}
+.site-footer a:focus-visible {
+  color: #dfc29c;
+}
+@media (max-width: 520px) {
+  .price-table > a:hover {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+/* Off/reduced motion keeps immediate colour/focus feedback, without rotations. */
+.motion-disabled *,
+.motion-disabled *::before,
+.motion-disabled *::after {
+  transition-duration: 0ms !important;
+  animation: none !important;
+}
+.motion-disabled
+  :is(
+    .logo img,
+    .product-image,
+    .resource-card img,
+    .button-arrow > svg,
+    .icon-button > svg,
+    .faq-item summary svg
+  ) {
+  transform: none !important;
+  rotate: none !important;
+}
+.motion-disabled .button-arrow > svg {
+  opacity: 1;
+}
+.motion-disabled .button-arrow > svg + svg {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-shell *,
+  .site-shell *::before,
+  .site-shell *::after {
+    transition-duration: 0ms !important;
+    animation: none !important;
+  }
+}
+@media print {
+  .button::before,
+  .button::after,
+  .product-panel-art::after,
+  .resource-card > div::after {
+    display: none;
+  }
+}
+
+.scroll-cue svg {
+  transform: rotate(90deg) translateX(calc(var(--engaged) * 6px));
+}
+@media (hover: hover) and (pointer: fine) {
+  .icon-button:hover {
+    background: transparent;
+  }
+}
+.motion-disabled .packet-image-link img {
+  scale: 1;
+}
+.motion-disabled .price-table > a > svg {
+  rotate: none;
+}

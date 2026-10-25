@@ -1,0 +1,14 @@
+BaleProof — Bale Witness identity
+
+SVG masters are real outlined vector paths, including the wordmark: no embedded bitmap and no font dependency.
+- horizontal: primary website and document logo
+- stacked: centered cover or social application
+- mark: full heron, bound material bale and evidence tag
+- wordmark: typographic signature
+- micro: simplified heron for small interfaces and favicons
+
+Colors: burgundy #612d3d, charcoal #252b28, ivory #f5f2eb.
+Use ivory on dark backgrounds. Preserve aspect ratio and allow clear space around the mark.
+Use the micro mark below 40 px; use the detailed mark at 48 px or larger.
+Favicon SVG plus PNG sizes 16, 32, 48, 180, 192 and 512 are included.
+The full mark and wordmark were vector-traced from the user-approved concept. The micro mark is a simplified vector companion.
